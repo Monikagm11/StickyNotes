@@ -4,6 +4,7 @@ import 'package:stickynotes/Provider/notes_list_provider.dart';
 import 'package:stickynotes/Screens/show_full_notes.dart';
 import 'package:stickynotes/Screens/write_notes.dart';
 import 'package:stickynotes/Widgets/home_gridview_card.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 
 class Home extends StatelessWidget {
@@ -33,11 +34,12 @@ class Home extends StatelessWidget {
                   ),
                 ),
               )
-            : GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
+              :MasonryGridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
                 itemCount: notesProvider.notes.length,
-                itemBuilder: ((context, index) {
+                itemBuilder: (context, index) {
                   return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -53,7 +55,29 @@ class Home extends StatelessWidget {
                         );
                       },
                       child: homeGridviewCard(context, notesProvider, index));
-                })),
+                },
+              ),
+            // : GridView.builder(
+            //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //         crossAxisCount: 2),
+            //     itemCount: notesProvider.notes.length,
+            //     itemBuilder: ((context, index) {
+            //       return GestureDetector(
+            //           onTap: () {
+            //             Navigator.of(context).push(
+            //               MaterialPageRoute(
+            //                 builder: (context) => ShowFullNotes(
+            //                   id: notesProvider.notes[index]['id'],
+            //                   title: notesProvider.notes[index]['title'],
+            //                   description: notesProvider.notes[index]
+            //                       ['description'],
+            //                   imgPath: notesProvider.notes[index]['imgPath'],
+            //                 ),
+            //               ),
+            //             );
+            //           },
+            //           child: homeGridviewCard(context, notesProvider, index));
+            //     })),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

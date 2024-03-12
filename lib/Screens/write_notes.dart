@@ -69,7 +69,7 @@ class _WriteNotesState extends State<WriteNotes> {
 
   @override
   Widget build(BuildContext context) {
-    //This is done to pass the title, description value into the tesxtbox while performing edit
+    //This is done to pass the title, description value into the textbox while performing edit
 
     NotesListProvider notesProvider =
         Provider.of<NotesListProvider>(context, listen: false);
@@ -100,110 +100,122 @@ class _WriteNotesState extends State<WriteNotes> {
     }
     //
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Sticky",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              )),
-          iconTheme: const IconThemeData(color: Colors.white),
-          backgroundColor: Theme.of(context).primaryColorLight,
-        ),
-        body: Column(
-          children: [
-            notesForm(context, title, description),
-            ListTile(
-              title: Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => pickImage(),
-                  child: FractionallySizedBox(
-                    widthFactor: 0.5,
-                    child: Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
-                        border: Border.all(
-                          width: 1,
-                          color: Colors.white,
+    return GestureDetector(
+            onTap: () {
+        FocusScopeNode cf = FocusScope.of(context);
+        if (!cf.hasPrimaryFocus) {
+          cf.unfocus();
+        }
+            },
+
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+
+          appBar: AppBar(
+            title: const Text("Sticky",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                )),
+            iconTheme: const IconThemeData(color: Colors.white),
+            backgroundColor: Theme.of(context).primaryColorLight,
+          ),
+          body: Column(
+            children: [
+              notesForm(context, title, description),
+              ListTile(
+                title: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () => pickImage(),
+                    child: FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColorDark,
+                          border: Border.all(
+                            width: 1,
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                        child: imagePath.isEmpty && toEditImagePath.isEmpty
+                            ? const Icon(
+                                Icons.add_a_photo,
+                                size: 40,
+                                color: Colors.teal,
+                              )
+                            : imagePath.isNotEmpty
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      File(imagePath),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      File(toEditImagePath),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                       ),
-                      child: imagePath.isEmpty && toEditImagePath.isEmpty
-                          ? const Icon(
-                              Icons.add_a_photo,
-                              size: 40,
-                              color: Colors.teal,
-                            )
-                          : imagePath.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    File(imagePath),
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    File(toEditImagePath),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 1,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (title.text != "" ||
-                    description.text != "" ||
-                    imagePath != "") {
-                  saveNotes(context, title.text, description.text, editId);
-                  title.clear();
-                  description.clear();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                        "Fill atleast one field",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+              const SizedBox(
+                height: 1,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (title.text != "" ||
+                      description.text != "" ||
+                      imagePath != "") {
+                    saveNotes(context, title.text, description.text, editId);
+                    title.clear();
+                    description.clear();
+                    Navigator.pushNamed(context, Home.routeName);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Fill atleast one field",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
+                        backgroundColor: const Color.fromARGB(255, 198, 7, 7),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        duration: const Duration(seconds: 1),
                       ),
-                      backgroundColor: const Color.fromARGB(255, 198, 7, 7),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.teal,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.teal,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  "Save",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              child: const Text(
-                "Save",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }
